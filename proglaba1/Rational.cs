@@ -1,17 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace proglaba1
 {
-    internal class Rational
+    public class Rational
     {
         private int numerator;
         private int denominator;
         public int Numerator { get { return numerator; } }
         public int Denominator { get { return denominator; } }
+
+        public Rational(int numerator, int denominator)
+        {
+            try
+            {
+                if (denominator == 0)
+                    throw new Exception("Деление на ноль!");
+
+                int nod = 1;
+                if (numerator != 0 && denominator != 0)
+                    nod = NOD(numerator, denominator);
+                this.numerator = numerator / nod;
+                this.denominator = denominator / nod;
+                if (this.numerator < 0 && this.denominator < 0)
+                {
+                    this.numerator = -this.numerator;
+                    this.denominator = -this.denominator;
+                }
+                else if (this.numerator > 0 && this.denominator < 0)
+                {
+                    this.numerator = -this.numerator;
+                    this.denominator = -this.denominator;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
         public static int NOD(int a, int b)
         {
 
@@ -50,11 +81,15 @@ namespace proglaba1
         }
         public static Rational operator *(Rational a, Rational b)
         {
+            if (a.denominator == 0 || b.denominator == 0)
+                return new Rational(0, 0);
             int nod = NOD(a.numerator * b.numerator, a.denominator * b.denominator);
             return new Rational(a.numerator * b.numerator / nod, a.denominator * b.denominator / nod);
         }
         public static Rational operator /(Rational a, Rational b)
         {
+            if (b.numerator == 0)
+                return new Rational(0,0);
             Rational c = new Rational(b.denominator, b.numerator);
             int nod = NOD(a.numerator * c.numerator, a.denominator * c.denominator);
             return new Rational(a.numerator * c.numerator / nod, a.denominator * c.denominator / nod);
@@ -103,11 +138,7 @@ namespace proglaba1
             int bmul = nok / b.denominator;
             return a.numerator * amul <= b.numerator * bmul;
         }
-        public Rational(int numerator, int denominator)
-        {
-            this.numerator = numerator;
-            this.denominator = denominator;
-        }
+        
         public override string ToString()
         {
             if (numerator == 0) return "0";
